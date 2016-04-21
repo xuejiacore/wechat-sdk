@@ -31,6 +31,10 @@ public class Item {
         this.color = color;
     }
 
+    public Item(String value) {
+        this(value, "#000000");
+    }
+
     public String getValue() {
         return value;
     }

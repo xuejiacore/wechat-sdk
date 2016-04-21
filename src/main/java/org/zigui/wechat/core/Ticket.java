@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import org.zigui.wechat.core.api.base.JsonRequester;
 import org.zigui.wechat.core.net.NetworkKit;
 import org.zigui.wechat.dxapi.ApiAuthor.JsonSign;
-import org.zigui.wechat.dxapi.ApiAuthor.XmlSign;
 import org.zigui.wechat.dxapi.WxApi;
 import org.zigui.wechat.dxapi.protocol.request.RequestProtocol;
 import org.zigui.wechat.dxapi.ApiPropertyUtil;
@@ -33,14 +32,20 @@ import java.util.*;
  */
 public class Ticket {
     private static Logger logger = Logger.getLogger(Ticket.class.getName());
-    private static final int API_TYPE_WEIXIN = 1;
-    private static final int API_TYPE_MATRICES = 2;
-    private static final int API_REQUEST_TYPE = Integer.parseInt(WePropertyUtil.getValue("API_REQUEST_TYPE"));
 
+    private static final int ALPHA = 1;                     // 刷新token以及ticket的周期因素
+    private static final int API_REQUEST_TYPE = Integer.parseInt(WePropertyUtil.getValue("API_REQUEST_TYPE"));
+    private static ITicket iTicket = null;
+
+    public interface ITicket {
+        Map<String, Object> getToken();
+
+        Map<String, Object> getTicket();
+    }
 
     public static void main(String[] args) {
         // TODO:token失效时请运行该类重新刷新token
-        Ticket.refreshAccessToken(true);
+        Ticket.refreshTickets(true);
     }
 
     /**
@@ -99,7 +104,7 @@ public class Ticket {
      *
      * @param force 是否进行强制刷新
      */
-    public static void refreshAccessToken(boolean force) {
+    public static void refreshTickets(boolean force) {
         if (force && timer != null) {
             timer.cancel();
             effective = false;
@@ -115,23 +120,37 @@ public class Ticket {
     }
 
     /**
-     * 获取JsTicket
+     * 使用一个Ticket接口获得相关参数信息
+     *
+     * @param force   是否进行强制刷新
+     * @param iTicket 处理后的Ticket必要参数
      */
-    private static void obtainJsTicket() {
-        String json = null;
-        if (API_REQUEST_TYPE == API_TYPE_WEIXIN) {
-            json = NetworkKit.sshPost(String.format(CGI_GET_JS_TICKET, accessToken), null);
-            logger.debug("* Js Ticket的获取渠道：微信官方接口");
-        } else if (API_REQUEST_TYPE == API_TYPE_MATRICES) {
+    public static void refreshTickets(boolean force, ITicket iTicket) {
+        Ticket.iTicket = iTicket;
+        if (iTicket.getToken().get("access_token") == null
+                || iTicket.getToken().get("expires_in") == null
+                || iTicket.getTicket().get("ticket") == null
+                || iTicket.getTicket().get("expires_in") == null)
             try {
-                RequestProtocol requestProtocol = new RequestProtocol(ApiPropertyUtil.getProperty(ApiPropertyUtil.WX_SYSACC),
-                        RequestProtocol.API_GET_TICKET, JsonSign.class);
-                json = NetworkKit.jsonPost(WxApi.CGI_GET_TICKET, requestProtocol.toString());
-                logger.debug("* Js Ticket的获取渠道：微信矩阵接口");
+                throw new Exception("请提供完整的参数信息");
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        refreshTickets(force);
+    }
+
+    /**
+     * 获取JsTicket
+     */
+    private static void obtainJsTicket() {
+        if (iTicket != null) {
+            jsTicket = (String) iTicket.getTicket().get("ticket");
+            logger.debug("* Customize JS ticket:【" + jsTicket + "】");
+            return;
         }
+
+        String json = NetworkKit.sshPost(String.format(CGI_GET_JS_TICKET, accessToken), null);
+        logger.debug("* Js Ticket的获取渠道：微信官方接口");
 
         ObjectMapper om = new ObjectMapper();
         try {
@@ -139,37 +158,28 @@ public class Ticket {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.debug("* js ticket:【" + jsTicket + "】");
+        logger.debug("* Default JS ticket:【" + jsTicket + "】");
     }
 
     /**
      * 获取微信token
      */
     private static void obtainToken() {
-        String respData;
-        JsonNode jsonNode = null;
-
-        String timeKey = API_REQUEST_TYPE == API_TYPE_MATRICES ? "expire_time" : "expires_in";
-        if (API_REQUEST_TYPE == API_TYPE_MATRICES) {
-            // 使用微信矩阵的接口获取access_token
-            try {
-                RequestProtocol requestProtocol = new RequestProtocol(ApiPropertyUtil.getProperty(ApiPropertyUtil.WX_SYSACC), RequestProtocol.API_GET_TOKEN, XmlSign.class);
-                respData = NetworkKit.xmlPost(WxApi.CGI_GET_TOKEN, requestProtocol.toString());
-                ObjectMapper om = new ObjectMapper();
-                jsonNode = om.readTree(respData);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            logger.debug("* Token获取渠道：微信矩阵接口");
-        } else if (API_REQUEST_TYPE == API_TYPE_WEIXIN) {
-            // 使用微信提供的接口获取access_token
-            jsonNode = JsonRequester.reqsWith(String.format(CGI_GET_ACCESS_TOKEN, Ticket.getAppId(),
-                    Ticket.getAppSecret()), null, JsonRequester.POST);
-            logger.debug("* Token获取渠道：微信官方接口");
+        if (iTicket != null) {
+            setAccessToken((String) iTicket.getToken().get("access_token"));
+            setExpiresIn((Integer) iTicket.getToken().get("expires_in"));
+            effective = true;
+            logger.debug("* Customize ticket.");
+            return;
         }
+
+        // 使用微信提供的接口获取access_token
+        JsonNode jsonNode = JsonRequester.reqsWith(String.format(CGI_GET_ACCESS_TOKEN, Ticket.getAppId(),
+                Ticket.getAppSecret()), null, JsonRequester.POST);
+        logger.debug("* Token获取渠道：微信官方接口");
         if (jsonNode != null) {
             setAccessToken(jsonNode.get("access_token").asText());
-            setExpiresIn(jsonNode.get(timeKey).asInt());
+            setExpiresIn(jsonNode.get("expires_in").asInt());
             effective = true;
             logger.debug("* Refresh access token!!\taccess_token: 【" + Ticket.getAccessToken() + "】\texpires_in: " + Ticket.getExpiresIn() + " s");
         } else {
@@ -218,10 +228,9 @@ public class Ticket {
             @Override
             public void run() {
                 effective = false;
-                refreshAccessToken(false);
+                refreshTickets(false);
             }
-            // TODO:为了能够比较准确地获得矩阵平台刷新的token，将延时2s后再重新获取矩阵平台更新后的token
-        }, (expiresIn + 2) * 1000);
+        }, (expiresIn + ALPHA) * 1000);
     }
 
     public static String getAppId() {
