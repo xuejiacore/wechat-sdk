@@ -10,12 +10,9 @@ package org.zigui.wechat.core;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
-import org.zigui.wechat.core.api.base.JsonRequester;
+import org.zigui.wechat.core.base.DefaultTicket;
+import org.zigui.wechat.core.base.ITicket;
 import org.zigui.wechat.core.net.NetworkKit;
-import org.zigui.wechat.dxapi.ApiAuthor.JsonSign;
-import org.zigui.wechat.dxapi.WxApi;
-import org.zigui.wechat.dxapi.protocol.request.RequestProtocol;
-import org.zigui.wechat.dxapi.ApiPropertyUtil;
 import org.zigui.wechat.util.WePropertyUtil;
 
 import java.io.IOException;
@@ -37,27 +34,7 @@ public class Ticket {
     private static final int API_REQUEST_TYPE = Integer.parseInt(WePropertyUtil.getValue("API_REQUEST_TYPE"));
     private static ITicket iTicket = null;
 
-    public interface ITicket {
-        Map<String, Object> getToken();
 
-        Map<String, Object> getTicket();
-    }
-
-    public static void main(String[] args) {
-        // TODO:token失效时请运行该类重新刷新token
-        Ticket.refreshTickets(true);
-    }
-
-    /**
-     * 获取公众号的access_token
-     */
-    private static final String CGI_GET_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token?" +
-            "grant_type=client_credential&appid=%s&secret=%s";
-    /**
-     * 获取网页js的使用ticket
-     */
-    private static final String CGI_GET_JS_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?" +
-            "access_token=%s&type=jsapi";
     /**
      * 获取网页授权后的access_token
      */
@@ -79,13 +56,11 @@ public class Ticket {
     /**
      * 通过验证后获得access_token
      */
-    //TODO
-    private static String accessToken = "bCKzWClByaAePVlsEexZfGr5QAyB1a_A6v6a__P76dHrXswm8PnYCHs7oa2_nMslQvRl-4MLCLGm0fQeCgJ0WMR7tBXBSVCDL9ER27LF1qVRI7pyIlNGy13WeTyRWf4eXEOiAGAAHR";
+    private static String accessToken = "Jo-hJWtotq_sSW31b-KLiTLQnXx52r1yEebacuXkTqWRz2YX6DwRgpPCty-G-fg7GU4qbOsvBLvrt26GM4z0253nmSFXcqYZUwQG_bYEbTeO6ub7qqfcTGW32I0-6DFuZUViAAATOP";
     /**
      * 微信的JS接口
      */
-    //TODO
-    private static String jsTicket = "sM4AOVdWfPE4DxkXGEs8VFQjvD9jxriOkvKohmSCT1E86KSMSVl7bP-dt2KrUKOCm8IIfe315s8lxE-OrFYalQ";
+    private static String jsTicket = "sM4AOVdWfPE4DxkXGEs8VFQjvD9jxriOkvKohmSCT1FcA09ohD3ntGwgOj9_vy1AEkwY7rJMD8OjK3d2HTOeYQ";
     /**
      * access_token的有效时长，默认为7200s
      */
@@ -113,8 +88,18 @@ public class Ticket {
             logger.warn("* The current credentials are valid, and this operation is not allowed under the non forced refresh mode!");
             return;
         }
-        Ticket.obtainToken();
-        Ticket.obtainJsTicket();
+        if (iTicket == null) {
+            iTicket = new DefaultTicket();
+            logger.debug("* 默认方式获取");
+        }
+
+        setAccessToken(iTicket.getAccessToken());
+        setExpiresIn(iTicket.getTokenExpiresIn());
+        effective = true;
+        logger.debug("* Refresh access token!!\taccess_token: 【" + Ticket.getAccessToken() + "】\texpires_in: " + Ticket.getExpiresIn() + " s");
+
+        jsTicket = iTicket.getJsTicket();
+        logger.debug("* JS ticket:【" + jsTicket + "】");
         refreshTime = new Date();
         timing();
     }
@@ -127,64 +112,16 @@ public class Ticket {
      */
     public static void refreshTickets(boolean force, ITicket iTicket) {
         Ticket.iTicket = iTicket;
-        if (iTicket.getToken().get("access_token") == null
-                || iTicket.getToken().get("expires_in") == null
-                || iTicket.getTicket().get("ticket") == null
-                || iTicket.getTicket().get("expires_in") == null)
+        if (iTicket.getAccessToken() == null
+                || iTicket.getTokenExpiresIn() == 0
+                || iTicket.getJsTicket() == null
+                || iTicket.getTicketExpiresIn() == 0)
             try {
                 throw new Exception("请提供完整的参数信息");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         refreshTickets(force);
-    }
-
-    /**
-     * 获取JsTicket
-     */
-    private static void obtainJsTicket() {
-        if (iTicket != null) {
-            jsTicket = (String) iTicket.getTicket().get("ticket");
-            logger.debug("* Customize JS ticket:【" + jsTicket + "】");
-            return;
-        }
-
-        String json = NetworkKit.sshPost(String.format(CGI_GET_JS_TICKET, accessToken), null);
-        logger.debug("* Js Ticket的获取渠道：微信官方接口");
-
-        ObjectMapper om = new ObjectMapper();
-        try {
-            jsTicket = om.readTree(json).get("ticket").asText();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        logger.debug("* Default JS ticket:【" + jsTicket + "】");
-    }
-
-    /**
-     * 获取微信token
-     */
-    private static void obtainToken() {
-        if (iTicket != null) {
-            setAccessToken((String) iTicket.getToken().get("access_token"));
-            setExpiresIn((Integer) iTicket.getToken().get("expires_in"));
-            effective = true;
-            logger.debug("* Customize ticket.");
-            return;
-        }
-
-        // 使用微信提供的接口获取access_token
-        JsonNode jsonNode = JsonRequester.reqsWith(String.format(CGI_GET_ACCESS_TOKEN, Ticket.getAppId(),
-                Ticket.getAppSecret()), null, JsonRequester.POST);
-        logger.debug("* Token获取渠道：微信官方接口");
-        if (jsonNode != null) {
-            setAccessToken(jsonNode.get("access_token").asText());
-            setExpiresIn(jsonNode.get("expires_in").asInt());
-            effective = true;
-            logger.debug("* Refresh access token!!\taccess_token: 【" + Ticket.getAccessToken() + "】\texpires_in: " + Ticket.getExpiresIn() + " s");
-        } else {
-            logger.warn("* 请求access_token失败");
-        }
     }
 
     /**

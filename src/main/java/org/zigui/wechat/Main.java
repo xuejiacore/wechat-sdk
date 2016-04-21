@@ -14,23 +14,7 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        Ticket.refreshTickets(false, new Ticket.ITicket() {
-            @Override
-            public Map<String, Object> getToken() {
-                Map<String, Object> data = new HashMap<>();
-                data.put("access_token", "jludMGPK7MoKY_V3ICuAKDrHyV_m7YcaK-OPTwlxWCILh_iskBTRrQTV6aCT_rYh5NTcLL1cyBpzf54kakb7q1ChCJTDZFqFoJBHeDHrW-CoPALYsdNJXTnGNTeaGXmTSJJbAAAHYY");
-                data.put("expires_in", 7200);
-                return data;
-            }
-
-            @Override
-            public Map<String, Object> getTicket() {
-                Map<String, Object> data = new HashMap<>();
-                data.put("ticket", "sM4AOVdWfPE4DxkXGEs8VFQjvD9jxriOkvKohmSCT1FKe56KGgg1JTbgh3s1yXf9-_geDytbGIPyqArqT2t3rg");
-                data.put("expires_in", 7200);
-                return data;
-            }
-        });
+        Ticket.refreshTickets(false);
         IObtainResult weUserAPI = new ModelMsg();
         Map<String, Object> params = new HashMap<>();
 //        params.put("openid","oCraWwO3Dk9ask9Em1wau7L8nTsE");
