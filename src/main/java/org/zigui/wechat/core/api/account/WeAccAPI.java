@@ -9,7 +9,7 @@ package org.zigui.wechat.core.api.account;
 
 
 import org.zigui.wechat.core.Ticket;
-import org.zigui.wechat.core.api.WechatAPI;
+import org.zigui.wechat.core.WechatAPI;
 import org.zigui.wechat.core.api.base.IObtainResult;
 import org.zigui.wechat.core.exception.WeChatException;
 import org.zigui.wechat.core.net.NetworkKit;
@@ -61,6 +61,15 @@ public class WeAccAPI implements IObtainResult {
     private static final String GET_QR_VIA_TICKET = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=%s";
     public static final String API_GET_QR = "GETQR";
 
+    private static final String CGI_LONG_TO_SHORT = "https://api.weixin.qq.com/cgi-bin/shorturl?access_token=%s";
+    public static final String API_LONG_2_SHORT = "L2S";
+
+    static {
+        paramInfo.put(API_CREATE_QR, "1/2P:[expire_seconds(Integer)] & scene_id(Integer)");
+        paramInfo.put(API_GET_QR, "1P: ticket(String)");
+        paramInfo.put(API_LONG_2_SHORT, "1P: long_url(String)");
+    }
+
     public Object getResult(String apiName, Map<String, Object> params) {
         if (API_CREATE_QR.equals(apiName)) {
             if (params.containsKey("expire_seconds")) {
@@ -70,9 +79,21 @@ public class WeAccAPI implements IObtainResult {
             }
         } else if (API_GET_QR.equals(apiName)) {
             return this.getQR((String) params.get("ticket"));
+        } else if (API_LONG_2_SHORT.equals(apiName)) {
+            return this.long2Short((String) params.get("long_url"));
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String necessaryParameter(String apiName) {
+        return paramInfo.get(apiName);
+    }
+
+    private Object long2Short(String longUrl) {
+        return NetworkKit.sshPostJson(String.format(CGI_LONG_TO_SHORT, Ticket.getAccessToken()),
+                "{\"action\":\"long2short\",\"long_url\":\"" + longUrl + "\"}");
     }
 
     /**
@@ -83,7 +104,7 @@ public class WeAccAPI implements IObtainResult {
      * ticket正确情况下，http 返回码是200，是一张图片，可以直接展示或者下载。
      */
     private Object getQR(String ticket) {
-        return NetworkKit.sshPost(String.format(GET_QR_VIA_TICKET, ticket), null);
+        return String.format(GET_QR_VIA_TICKET, ticket);
     }
 
     /**
@@ -110,12 +131,13 @@ public class WeAccAPI implements IObtainResult {
     }
 
     public static void main(String[] args) {
+        Ticket.refreshTickets(true);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("expire_seconds", 300);
         params.put("scene_id", 1);
         params.put("ticket", "gQF_8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xLzFrd0gyYXptVU5JcGdyUjRRbUxHAAIEEv2cVgMELAEAAA%3D%3D");
         try {
-            WechatAPI.getResult(WeAccAPI.class, WeAccAPI.API_GET_QR, params);
+            WechatAPI.getResult(WeAccAPI.class, WeAccAPI.API_CREATE_QR, params);
         } catch (WeChatException e) {
             e.printStackTrace();
         }

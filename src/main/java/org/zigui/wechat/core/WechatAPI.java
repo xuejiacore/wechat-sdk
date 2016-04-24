@@ -5,13 +5,14 @@
  * Date Time: 2016/4/20 22:32
  * Copyright: 2016 www.zigui.com.cn. All rights reserved.
  **/
-package org.zigui.wechat.core.api;
+package org.zigui.wechat.core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.zigui.wechat.core.api.base.IObtainResult;
 import org.zigui.wechat.core.exception.WeChatException;
+import org.zigui.wechat.core.exception.WechatParameterException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -31,7 +32,7 @@ import java.util.Map;
  */
 public abstract class WechatAPI implements IObtainResult {
 
-    private static Logger logger = Logger.getLogger(WeChatException.class);
+    private static Logger logger = Logger.getLogger(WechatAPI.class);
 
     /**
      * 根据指定的API类名，获取对应的处理结果
@@ -42,7 +43,7 @@ public abstract class WechatAPI implements IObtainResult {
      * @return 返回请求的响应内容
      * @throws WeChatException
      */
-    public static Object getResult(Class<? extends IObtainResult> resultCls, String apiName, Map<String, Object> params) throws WeChatException {
+    public static Object getResult(Class<? extends IObtainResult> resultCls, String apiName, Map<String, Object> params) throws WeChatException, WechatParameterException {
         IObtainResult api = null;
         try {
             api = resultCls.newInstance();
@@ -50,10 +51,14 @@ public abstract class WechatAPI implements IObtainResult {
             e.printStackTrace();
         }
         assert api != null;
-        Object result = api.getResult(apiName, params);
-
-        // 对请求的结果进行异常检查
-        logger.debug("* " + result);
+        Object result;
+        try {
+            result = api.getResult(apiName, params);
+        } catch (NullPointerException e) {
+            throw new WechatParameterException(api, apiName);
+        }
+        // 在输出日志中答应请求响应结果
+        logger.debug("* RESPONSE:" + result);
         if (result instanceof String && ((String) result).contains("err")) {
             ObjectMapper om = new ObjectMapper();
             JsonNode jsonNode = null;
@@ -64,6 +69,7 @@ public abstract class WechatAPI implements IObtainResult {
                 e.printStackTrace();
             }
             if (jsonNode != null && jsonNode.get("errcode").asInt(0) != 0) {
+                // 如果请求的响应状态码不为0，那么将抛出一个错误
                 throw new WeChatException(jsonNode);
             }
         } else if (result instanceof JsonNode) {

@@ -32,8 +32,18 @@ abstract class AbstractRequester implements INet {
     private IParamsParser parser = null;
 
 
+    /**
+     * 预处理
+     */
     protected abstract void pretreatment();
 
+    /**
+     * 执行后处理
+     *
+     * @param result 执行请求返回的结果
+     * @return 返回处理后生成的对象内容
+     * @throws Exception
+     */
     protected abstract Object postprocessing(String result) throws Exception;
 
     /**
@@ -79,6 +89,7 @@ abstract class AbstractRequester implements INet {
     private String exec() {
         String resp = null;
         if (this.pairs == null && this.parser != null) {
+            // 使用一个参数请求参数到一个NameValuePair中
             this.pairs = ((ParamsParserAdapter) this.parser).parse();
         }
         if (POST.equals(this.method.toLowerCase())) {

@@ -3,7 +3,7 @@
   <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/core/Ticket.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/core/WeSign.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/core/api/WechatAPI.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/core/WechatAPI.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/core/api/base/AbstractRequester.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/core/api/base/INet.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/core/api/base/IObtainResult.java" charset="UTF-8" />

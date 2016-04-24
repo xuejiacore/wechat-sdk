@@ -124,6 +124,8 @@ public class WeMaterialAPI implements IObtainResult {
     private static final String CGI_GET_LIMIT_MATERIAL = "https://api.weixin.qq.com/cgi-bin/material/get_material?access_token=%s";
     public static final String API_GET_LIMIT_MATERIAL = "GETLIMIT";
 
+    private static final String CGI_DEL_LIMIT_MATERIAL = "https://api.weixin.qq.com/cgi-bin/material/del_material?access_token=%s";
+    public static final String API_DEL_LIMIT_MATERIAL = "DELLIMIT";
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     /**
@@ -274,9 +276,20 @@ public class WeMaterialAPI implements IObtainResult {
         } else if (API_ADD_NEWS.equals(apiName)) {
             // 新增永久图文素材
             return this.addNews((List<Article>) params.get("articles"));
+        } else if (API_DEL_LIMIT_MATERIAL.equals(apiName)) {
+            return this.delLimitMaterial((String) params.get("media_id"));
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String necessaryParameter(String apiName) {
+        return null;
+    }
+
+    private Object delLimitMaterial(String mediaId) {
+        return NetworkKit.sshPostJson(String.format(CGI_DEL_LIMIT_MATERIAL, Ticket.getAccessToken()), "{\"media_id\":\"" + mediaId + "\"}");
     }
 
     private Object addNews(List<Article> articles) {

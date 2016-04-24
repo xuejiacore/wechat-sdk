@@ -30,6 +30,12 @@ public class WeChatException extends Exception {
      */
     private JsonNode node = null;
 
+    private boolean checkParameter = false;
+
+    public WeChatException() {
+        checkParameter = true;
+    }
+
     /**
      * 构建一个WeChat异常类
      *
@@ -103,11 +109,15 @@ public class WeChatException extends Exception {
 
     @Override
     public void printStackTrace() {
-        int errorCode = node.get("errcode").asInt();
-        System.err.println("\n* [ " + errorCode + " ] " + WechatError.getError(errorCode) + " - " + new Date());
-        switch (errorCode) {
-            case 42001:
-                System.err.println("* access_token refresh time: " + Ticket.getRefreshTime());
+        if (checkParameter) {
+            System.err.println("\n* API调用参数不足 - " + new Date());
+        } else {
+            int errorCode = node.get("errcode").asInt();
+            System.err.println("\n* [ " + errorCode + " ] " + getTransMsg() + " - " + new Date());
+            switch (errorCode) {
+                case 42001:
+                    System.err.println("* access_token refresh time: " + Ticket.getRefreshTime());
+            }
         }
         super.printStackTrace();
     }

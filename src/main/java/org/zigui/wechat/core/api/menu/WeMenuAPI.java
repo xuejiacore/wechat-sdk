@@ -9,7 +9,7 @@ package org.zigui.wechat.core.api.menu;
 
 import com.google.gson.Gson;
 import org.zigui.wechat.core.Ticket;
-import org.zigui.wechat.core.api.WechatAPI;
+import org.zigui.wechat.core.WechatAPI;
 import org.zigui.wechat.core.api.base.IObtainResult;
 import org.zigui.wechat.core.api.menu.entity.Button;
 import org.zigui.wechat.core.api.menu.entity.MainMenu;
@@ -73,6 +73,11 @@ public class WeMenuAPI implements IObtainResult {
         }
     }
 
+    @Override
+    public String necessaryParameter(String apiName) {
+        return null;
+    }
+
     /**
      * 删除菜单，注意，即使是有默认的菜单和个性化菜单，调用此接口依然会删除所有的菜单
      *
@@ -121,7 +126,7 @@ public class WeMenuAPI implements IObtainResult {
      *
      * @return
      */
-    private static Menu getMenu() {
+    public static Menu getMenu() {
         SubMenu btn11 = new SubMenu();
         btn11.setName("天气预报");
         btn11.setType("view");

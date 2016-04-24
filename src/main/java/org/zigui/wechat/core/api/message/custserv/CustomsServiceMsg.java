@@ -114,4 +114,9 @@ public class CustomsServiceMsg implements IObtainResult {
         }
         return result;
     }
+
+    @Override
+    public String necessaryParameter(String apiName) {
+        return null;
+    }
 }

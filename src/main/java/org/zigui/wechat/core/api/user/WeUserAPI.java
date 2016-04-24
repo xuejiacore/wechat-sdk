@@ -7,8 +7,10 @@
  **/
 package org.zigui.wechat.core.api.user;
 
+import com.google.gson.Gson;
 import org.zigui.wechat.core.Ticket;
-import org.zigui.wechat.core.api.WechatAPI;
+import org.zigui.wechat.core.WechatAPI;
+import org.zigui.wechat.core.api.base.AbstractAPI;
 import org.zigui.wechat.core.api.base.IObtainResult;
 import org.zigui.wechat.core.exception.WeChatException;
 import org.zigui.wechat.core.net.NetworkKit;
@@ -28,7 +30,7 @@ import java.util.Map;
  * 参见官方API文档：http://mp.weixin.qq.com/wiki/12/54773ff6da7b8bdc95b7d2667d84b1d4.html
  * <p>
  */
-public class WeUserAPI implements IObtainResult {
+public class WeUserAPI extends AbstractAPI implements IObtainResult {
 
     /**
      * 获取用户列表
@@ -93,18 +95,31 @@ public class WeUserAPI implements IObtainResult {
      */
     public static final String API_BAT_INFO = "BAT";
 
+    static {
+        paramInfo.put(API_LIST_USERS, "0/1P: [openid(String)]");
+        paramInfo.put(API_USER_REMARK, "2P: openid(String), remark(String)");
+        paramInfo.put(API_USER_INFO, "1P: openid(String)");
+        paramInfo.put(API_BAT_INFO, "1P: openids(String[])");
+    }
+
     public Object getResult(String apiName, Map<String, Object> params) {
         if (API_LIST_USERS.equals(apiName)) {
-            return this.listUsers((String) params.get("openid"));
+            String nextOpenId = params != null && params.size() > 0 ? (String) params.get("openid") : "";
+            return this.listUsers((String) checkEmpty(nextOpenId == null ? "" : nextOpenId, false));
         } else if (API_USER_REMARK.equals(apiName)) {
-            return this.remarkUser((String) params.get("openid"), (String) params.get("remark"));
+            return this.remarkUser((String) checkEmpty(params.get("openid")), (String) checkEmpty(params.get("remark")));
         } else if (API_USER_INFO.equals(apiName)) {
-            return this.getUserInfo((String) params.get("openid"));
+            return new Gson().fromJson((String) this.getUserInfo((String) checkEmpty(params.get("openid"))), UserInfo.class);
         } else if (API_BAT_INFO.equals(apiName)) {
-            return this.getUserInfoBat((String[]) params.get("openids"));
+            return this.getUserInfoBat((String[]) checkEmpty(params.get("openids")));
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String necessaryParameter(String apiName) {
+        return paramInfo.get(apiName);
     }
 
     /**
@@ -163,12 +178,13 @@ public class WeUserAPI implements IObtainResult {
     }
 
     public static void main(String[] args) {
+        Ticket.refreshTickets(false);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("openid", "oAm5Vt_CzAdnFZ4SHGTwZZPxVdYk");
         params.put("remark", "言子圭");
         params.put("openids", new String[]{"oAm5Vt_CzAdnFZ4SHGTwZZPxVdYk"});
         try {
-            WechatAPI.getResult(WeUserAPI.class, WeUserAPI.API_BAT_INFO, params);
+            System.err.println(WechatAPI.getResult(WeUserAPI.class, WeUserAPI.API_USER_INFO, params));
         } catch (WeChatException e) {
             e.printStackTrace();
         }

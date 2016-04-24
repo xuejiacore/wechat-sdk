@@ -9,7 +9,7 @@ package org.zigui.wechat.core.api.message.model;
 
 import com.google.gson.Gson;
 import org.zigui.wechat.core.Ticket;
-import org.zigui.wechat.core.api.WechatAPI;
+import org.zigui.wechat.core.WechatAPI;
 import org.zigui.wechat.core.net.NetworkKit;
 
 import java.util.Map;
@@ -104,6 +104,11 @@ public class ModelMsg extends WechatAPI {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String necessaryParameter(String apiName) {
+        return null;
     }
 
     /**

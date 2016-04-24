@@ -23,7 +23,7 @@ public class Article {
     private String thumb_media_id = null;
     // 图文消息的作者
     private String author = null;
-    // 但图文消息的摘要
+    // 单图文消息的摘要
     private String digest = null;
     // 是否作为封面（0 false 1 true）
     private int show_cover_pic = 0;

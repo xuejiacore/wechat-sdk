@@ -7,6 +7,7 @@
  **/
 package org.zigui.wechat.core.api.base;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,6 +20,8 @@ import java.util.Map;
  * Description:请求返回的结果
  */
 public interface IObtainResult {
+    Map<String, String> paramInfo = new HashMap<>();
+
     /**
      * 获得API请求的结果
      *
@@ -27,4 +30,6 @@ public interface IObtainResult {
      * @return 返回请求的结果
      */
     Object getResult(String name, Map<String, Object> params);
+
+    String necessaryParameter(String apiName);
 }

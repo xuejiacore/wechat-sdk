@@ -84,4 +84,9 @@ public class WeServerIp implements IObtainResult {
         }
         return null;
     }
+
+    @Override
+    public String necessaryParameter(String apiName) {
+        return null;
+    }
 }

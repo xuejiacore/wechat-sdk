@@ -56,11 +56,11 @@ public class Ticket {
     /**
      * 通过验证后获得access_token
      */
-    private static String accessToken = "Jo-hJWtotq_sSW31b-KLiTLQnXx52r1yEebacuXkTqWRz2YX6DwRgpPCty-G-fg7GU4qbOsvBLvrt26GM4z0253nmSFXcqYZUwQG_bYEbTeO6ub7qqfcTGW32I0-6DFuZUViAAATOP";
+    private static String accessToken = "zj8KCihcy2C4UpeU9-c1r3jmsY_RxFKbQUZI4VuoRJx9kE1-oSoMhQlCOwuOBooGzqdavynqXj14JOxcNB8WPpFlY_yUDBWWJV_ffdl0UOr88SacFZOWleJeqJm9FtH9COGhAFALXP";
     /**
      * 微信的JS接口
      */
-    private static String jsTicket = "sM4AOVdWfPE4DxkXGEs8VFQjvD9jxriOkvKohmSCT1FcA09ohD3ntGwgOj9_vy1AEkwY7rJMD8OjK3d2HTOeYQ";
+    private static String jsTicket = "sM4AOVdWfPE4DxkXGEs8VFQjvD9jxriOkvKohmSCT1FIt1PNtJHTXWchLODMOMqdvw_rGkYtVC9Oz1B8v0DPLg";
     /**
      * access_token的有效时长，默认为7200s
      */
