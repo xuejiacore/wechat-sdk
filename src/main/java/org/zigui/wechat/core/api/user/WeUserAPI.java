@@ -109,7 +109,7 @@ public class WeUserAPI extends AbstractAPI implements IObtainResult {
         } else if (API_USER_REMARK.equals(apiName)) {
             return this.remarkUser((String) checkEmpty(params.get("openid")), (String) checkEmpty(params.get("remark")));
         } else if (API_USER_INFO.equals(apiName)) {
-            return new Gson().fromJson((String) this.getUserInfo((String) checkEmpty(params.get("openid"))), UserInfo.class);
+            return this.getUserInfo((String) checkEmpty(params.get("openid")));
         } else if (API_BAT_INFO.equals(apiName)) {
             return this.getUserInfoBat((String[]) checkEmpty(params.get("openids")));
         } else {
@@ -178,13 +178,13 @@ public class WeUserAPI extends AbstractAPI implements IObtainResult {
     }
 
     public static void main(String[] args) {
-        Ticket.refreshTickets(false);
+        Ticket.refreshTickets(true);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("openid", "oAm5Vt_CzAdnFZ4SHGTwZZPxVdYk");
         params.put("remark", "言子圭");
         params.put("openids", new String[]{"oAm5Vt_CzAdnFZ4SHGTwZZPxVdYk"});
         try {
-            System.err.println(WechatAPI.getResult(WeUserAPI.class, WeUserAPI.API_USER_INFO, params));
+            System.err.println(WechatAPI.getResult(WeUserAPI.class, WeUserAPI.API_USER_INFO, params, UserInfo.class));
         } catch (WeChatException e) {
             e.printStackTrace();
         }

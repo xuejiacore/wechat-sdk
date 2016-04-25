@@ -24,6 +24,7 @@ public class WechatParameterException extends WeChatException {
     private String apiName = null;
 
     public WechatParameterException(IObtainResult api, String apiName) {
+        super(CHECK_PARAMETER);
         this.api = api;
         this.apiName = apiName;
     }

@@ -9,8 +9,11 @@ package org.zigui.wechat.core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.zigui.wechat.core.api.base.IObtainResult;
+import org.zigui.wechat.core.exception.CanNotTransferException;
+import org.zigui.wechat.core.exception.UnknownResultException;
 import org.zigui.wechat.core.exception.WeChatException;
 import org.zigui.wechat.core.exception.WechatParameterException;
 
@@ -43,7 +46,22 @@ public abstract class WechatAPI implements IObtainResult {
      * @return 返回请求的响应内容
      * @throws WeChatException
      */
-    public static Object getResult(Class<? extends IObtainResult> resultCls, String apiName, Map<String, Object> params) throws WeChatException, WechatParameterException {
+    public static Object getResult(Class<? extends IObtainResult> resultCls, String apiName, Map<String, Object> params) throws WeChatException {
+        return getResult(resultCls, apiName, params, null);
+    }
+
+    /**
+     * 根据置顶的API类名，获取对应的处理结果，该结果允许通过转化类型进行转型（如果该结果能被转化）
+     *
+     * @param resultCls API结果类型
+     * @param apiName   调用的API名称
+     * @param params    调用API所需的参数
+     * @param clz       调用API后进行转化的类（如果为null则不进行转化）
+     * @return 如果有指定转化类，那么返回转化后的结果，否则返回一个结果数据，结果数据可能是Json也可能是JsonNode
+     * @throws WeChatException
+     */
+    public static Object getResult(Class<? extends IObtainResult> resultCls, String apiName, Map<String, Object> params,
+                                   Class clz) throws WeChatException {
         IObtainResult api = null;
         try {
             api = resultCls.newInstance();
@@ -65,8 +83,7 @@ public abstract class WechatAPI implements IObtainResult {
             try {
                 jsonNode = om.readTree((String) result);
             } catch (IOException e) {
-                // TODO:构建一个请求响应类型异常
-                e.printStackTrace();
+                throw new UnknownResultException();
             }
             if (jsonNode != null && jsonNode.get("errcode").asInt(0) != 0) {
                 // 如果请求的响应状态码不为0，那么将抛出一个错误
@@ -75,6 +92,13 @@ public abstract class WechatAPI implements IObtainResult {
         } else if (result instanceof JsonNode) {
             if (((JsonNode) result).get("errcode").asInt() != 0) {
                 throw new WeChatException((JsonNode) result);
+            }
+        }
+        if (result instanceof String && clz != null) {
+            try {
+                result = new Gson().fromJson((String) result, clz);
+            } catch (RuntimeException e) {
+                throw new CanNotTransferException();
             }
         }
         logger.debug("* REQUEST SUCCESS!");

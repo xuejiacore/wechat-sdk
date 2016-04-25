@@ -30,10 +30,15 @@ public class WeChatException extends Exception {
      */
     private JsonNode node = null;
 
-    private boolean checkParameter = false;
+    protected static final int UNKNOWN_EXCEPTION = -1;
+    protected static final int CHECK_PARAMETER = 1;
+    protected static final int CAN_NOT_TRANSFER = 2;
+    protected static final int UNKNOWN_RESULT = 3;
+    private int exceptionType = UNKNOWN_EXCEPTION;
 
-    public WeChatException() {
-        checkParameter = true;
+
+    public WeChatException(int exType) {
+        exceptionType = exType;
     }
 
     /**
@@ -109,8 +114,12 @@ public class WeChatException extends Exception {
 
     @Override
     public void printStackTrace() {
-        if (checkParameter) {
+        if (exceptionType == CHECK_PARAMETER) {
             System.err.println("\n* API调用参数不足 - " + new Date());
+        } else if (exceptionType == CAN_NOT_TRANSFER) {
+            System.err.println("\n* 无法对结果进行目标结果的转化");
+        } else if (exceptionType == UNKNOWN_RESULT) {
+            System.err.println("\n* 未知的请求结果数据结构");
         } else {
             int errorCode = node.get("errcode").asInt();
             System.err.println("\n* [ " + errorCode + " ] " + getTransMsg() + " - " + new Date());
