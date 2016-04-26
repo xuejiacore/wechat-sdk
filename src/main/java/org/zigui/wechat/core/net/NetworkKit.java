@@ -271,7 +271,7 @@ public class NetworkKit {
                     result = EntityUtils.toString(resEntity, "UTF-8");
                 }
             }
-        } catch (ParseException | IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {

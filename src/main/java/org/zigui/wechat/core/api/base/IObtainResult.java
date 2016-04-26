@@ -20,7 +20,7 @@ import java.util.Map;
  * Description:请求返回的结果
  */
 public interface IObtainResult {
-    Map<String, String> paramInfo = new HashMap<>();
+    Map<String, String> paramInfo = new HashMap<String, String>();
 
     /**
      * 获得API请求的结果

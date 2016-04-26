@@ -31,7 +31,6 @@ public class Ticket {
     private static Logger logger = Logger.getLogger(Ticket.class.getName());
 
     private static final int ALPHA = 1;                     // 刷新token以及ticket的周期因素
-    private static final int API_REQUEST_TYPE = Integer.parseInt(WePropertyUtil.getValue("API_REQUEST_TYPE"));
     private static ITicket iTicket = null;
 
 
@@ -134,8 +133,8 @@ public class Ticket {
         if (code == null) {
             return null;
         }
-        Map<String, String> ret = new HashMap<>();
-        String json = NetworkKit.sshPost(String.format(CGI_GET_WEB_ACCESS_TOKEN, appId, appSecret, code), null);
+        Map<String, String> ret = new HashMap<String, String>();
+        String  json = NetworkKit.sshPost(String.format(CGI_GET_WEB_ACCESS_TOKEN, appId, appSecret, code), null);
         if (!json.contains("scope")) {
             return null;
         }

@@ -58,22 +58,9 @@
     <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/core/net/INet.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/core/net/NetworkKit.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/core/net/SSLHttpClient.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/ApiAuthor/JsonSign.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/ApiAuthor/Sign.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/ApiAuthor/XmlSign.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/ApiPropertyUtil.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/WxApi.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/protocol/request/GeneralReqBody.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/protocol/request/RequestBody.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/protocol/request/RequestProtocol.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/protocol/request/UserInfoReqBody.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/protocol/response/GeneralRspBody.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/protocol/response/ResponseBody.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/protocol/response/ResponseProtocol.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/dxapi/protocol/response/TokenRsp.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/util/PropertyUtil.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/zigui/wechat/util/SecretUtils.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/config.properties" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/log4j.properties" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

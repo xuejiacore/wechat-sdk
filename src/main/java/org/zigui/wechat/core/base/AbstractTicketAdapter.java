@@ -33,27 +33,23 @@ public abstract class AbstractTicketAdapter implements ITicket {
         if (ticketData != null) {
             this.accessToken = (String) ticketData.get(K_ACCESS_TOKEN);
             this.jsTicket = (String) ticketData.get(K_JS_TICKET);
-            this.tokenExpiresIn = (int) ticketData.get(K_TOKEN_EXPIRES_IN);
-            this.ticketExpiresIn = (int) ticketData.get(K_TICKET_EXPIRES_IN);
+            this.tokenExpiresIn = (Integer) ticketData.get(K_TOKEN_EXPIRES_IN);
+            this.ticketExpiresIn = (Integer) ticketData.get(K_TICKET_EXPIRES_IN);
         }
     }
 
-    @Override
     public String getAccessToken() {
         return accessToken;
     }
 
-    @Override
     public String getJsTicket() {
         return jsTicket;
     }
 
-    @Override
     public int getTokenExpiresIn() {
         return tokenExpiresIn;
     }
 
-    @Override
     public int getTicketExpiresIn() {
         return ticketExpiresIn;
     }

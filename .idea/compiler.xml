@@ -23,7 +23,11 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="WeChatApi" />
+        <module name="微信API" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="微信API" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>

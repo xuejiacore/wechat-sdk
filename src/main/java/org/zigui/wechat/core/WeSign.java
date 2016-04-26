@@ -80,7 +80,7 @@ public class WeSign {
      * @return 返回在页面中可用的jsapi_ticket
      */
     public static Map<String, String> checkJsSignature(String jsApiTicket, String url, String nonceStr, String timestamp) {
-        Map<String, String> ret = new HashMap<>();
+        Map<String, String> ret = new HashMap<String, String>();
         String tmpStr;
         String signature = "";
 
@@ -95,7 +95,7 @@ public class WeSign {
             crypt.reset();
             crypt.update(tmpStr.getBytes("UTF-8"));
             signature = byteToHex(crypt.digest());
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

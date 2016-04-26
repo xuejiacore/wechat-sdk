@@ -9,12 +9,9 @@ package org.zigui.wechat.core.api.account;
 
 
 import org.zigui.wechat.core.Ticket;
-import org.zigui.wechat.core.WechatAPI;
 import org.zigui.wechat.core.api.base.IObtainResult;
-import org.zigui.wechat.core.exception.WeChatException;
 import org.zigui.wechat.core.net.NetworkKit;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -130,17 +127,5 @@ public class WeAccAPI implements IObtainResult {
                 String.format(qrPostTmpStr, expireSeconds, sceneId));
     }
 
-    public static void main(String[] args) {
-        Ticket.refreshTickets(true);
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("expire_seconds", 300);
-        params.put("scene_id", 1);
-        params.put("ticket", "gQF_8DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xLzFrd0gyYXptVU5JcGdyUjRRbUxHAAIEEv2cVgMELAEAAA%3D%3D");
-        try {
-            WechatAPI.getResult(WeAccAPI.class, WeAccAPI.API_CREATE_QR, params);
-        } catch (WeChatException e) {
-            e.printStackTrace();
-        }
-    }
 }
 

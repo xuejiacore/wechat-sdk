@@ -65,7 +65,7 @@ public abstract class WechatAPI implements IObtainResult {
         IObtainResult api = null;
         try {
             api = resultCls.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         assert api != null;

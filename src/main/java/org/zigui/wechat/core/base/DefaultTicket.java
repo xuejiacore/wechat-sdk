@@ -28,9 +28,8 @@ import java.util.Map;
  */
 public class DefaultTicket extends AbstractTicketAdapter {
 
-    @Override
     public Map<String, Object> refreshTicket() {
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new HashMap<String, Object>();
 
         // 使用微信提供的接口获取access_token
         JsonNode jsonNode = JsonRequester.reqsWith(String.format(CGI_GET_ACCESS_TOKEN, Ticket.getAppId(),
