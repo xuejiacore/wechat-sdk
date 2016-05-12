@@ -117,7 +117,6 @@ public class WeUserAPI extends AbstractAPI implements IObtainResult {
         }
     }
 
-    @Override
     public String necessaryParameter(String apiName) {
         return paramInfo.get(apiName);
     }

@@ -23,12 +23,27 @@ import java.util.Map;
 public abstract class AbstractTicketAdapter implements ITicket {
     Logger logger = Logger.getLogger(ITicket.class);
 
+    /**
+     * Access Token
+     */
     protected String accessToken = null;
+    /**
+     * Js Ticket
+     */
     protected String jsTicket = null;
+    /**
+     * Token Expires In
+     */
     protected int tokenExpiresIn = 0;
+    /**
+     * Ticket Expires In
+     */
     protected int ticketExpiresIn = 0;
 
-    public AbstractTicketAdapter() {
+    /**
+     * 获得Ticket
+     */
+    public void obtainTicket() {
         Map<String, Object> ticketData = refreshTicket();
         if (ticketData != null) {
             this.accessToken = (String) ticketData.get(K_ACCESS_TOKEN);

@@ -34,6 +34,7 @@ public class WeChatException extends Exception {
     protected static final int CHECK_PARAMETER = 1;
     protected static final int CAN_NOT_TRANSFER = 2;
     protected static final int UNKNOWN_RESULT = 3;
+    protected static final int GENERAL = -99;
     private int exceptionType = UNKNOWN_EXCEPTION;
 
 
@@ -54,10 +55,12 @@ public class WeChatException extends Exception {
         } catch (IOException e) {
             this.node = null;
         }
+        exceptionType = GENERAL;
     }
 
     public WeChatException(JsonNode jsonNode) {
         this.node = jsonNode;
+        exceptionType = GENERAL;
     }
 
     /**

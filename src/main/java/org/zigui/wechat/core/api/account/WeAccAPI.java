@@ -83,7 +83,6 @@ public class WeAccAPI implements IObtainResult {
         }
     }
 
-    @Override
     public String necessaryParameter(String apiName) {
         return paramInfo.get(apiName);
     }

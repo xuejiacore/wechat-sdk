@@ -7,6 +7,7 @@
  **/
 package org.zigui.wechat.core.api.message.model;
 
+import org.zigui.wechat.core.Ticket;
 import org.zigui.wechat.core.exception.WeChatException;
 
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class Template {
         return touser;
     }
 
-    public void setTouser(String touser) {
+    public void setToUser(String touser) {
         this.touser = touser;
     }
 
@@ -76,6 +77,7 @@ public class Template {
      * 测试结果
      */
     public static void main(String[] args) {
+        Ticket.refreshTickets(true);
         Template template = new Template();
         TemplateData data = new TemplateData();
         data.setFirst(new Item("您好，您的交易信息如下：", "#0099cc"));
@@ -85,7 +87,7 @@ public class Template {
         data.setKey4(new Item("2016-01-18 09:27:57", "#0099cc"));
         data.setRemark(new Item("欢迎您再次购买", "#0099cc"));
         template.setData(data);
-        template.setTouser("oAm5Vt_CzAdnFZ4SHGTwZZPxVdYk");
+        template.setToUser("oAm5Vt_CzAdnFZ4SHGTwZZPxVdYk");
         template.setUrl("http://www.baidu.com");
         template.setTemplate_id("e_WUa9BksV2v61WA3fVkF5CHtYah32jlltovuF3UJrg");
 

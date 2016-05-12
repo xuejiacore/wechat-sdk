@@ -106,7 +106,6 @@ public class ModelMsg extends WechatAPI {
         }
     }
 
-    @Override
     public String necessaryParameter(String apiName) {
         return null;
     }

@@ -91,6 +91,7 @@ public class Ticket {
             iTicket = new DefaultTicket();
             logger.debug("* 默认方式获取");
         }
+        iTicket.obtainTicket();
 
         setAccessToken(iTicket.getAccessToken());
         setExpiresIn(iTicket.getTokenExpiresIn());

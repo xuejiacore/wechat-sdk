@@ -70,4 +70,9 @@ public interface ITicket {
      * @return 刷新Ticket，返回的参数
      */
     Map<String, Object> refreshTicket();
+
+    /**
+     * 获得Ticket
+     */
+    void obtainTicket();
 }
